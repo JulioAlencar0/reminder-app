@@ -21,7 +21,7 @@ export default function Index() {
     Animated.spring(slideAnim, {
       toValue: 0,
       speed: 1.5, 
-      bounciness: 3, 
+      bounciness: 18, 
       useNativeDriver: true,
     }).start();
   }, []);
@@ -34,6 +34,8 @@ export default function Index() {
         style={styles.logo}
         source={require("../assets/images/logo.svg")}
       />
+
+      <View style={styles.fundoBrancoFix}></View>
 
       {/* Caixa animada com bounce */}
       <Animated.View
@@ -98,6 +100,16 @@ const styles = StyleSheet.create({
     height: 60,
     top: -220,
   },
+  fundoBrancoFix: {
+  position: "absolute",
+  bottom: 0,
+  width: "100%",
+  height: 300, 
+  backgroundColor: "#E4ECE9",
+  borderTopLeftRadius: 30,
+  borderTopRightRadius: 30,
+},
+
   loginCreate: {
     width: "100%",
     height: 480,
