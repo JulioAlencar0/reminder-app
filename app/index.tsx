@@ -15,14 +15,13 @@ export default function Index() {
   const [senhaVisivel, setSenhaVisivel] = useState(false);
   const router = useRouter();
 
-  // Animação com bounce
   const slideAnim = useRef(new Animated.Value(300)).current; // Começa abaixo da tela
 
   useEffect(() => {
     Animated.spring(slideAnim, {
       toValue: 0,
-      speed: 1.5, // controla a velocidade
-      bounciness: 18, // quanto maior, mais "quica"
+      speed: 1.5, 
+      bounciness: 3, 
       useNativeDriver: true,
     }).start();
   }, []);
