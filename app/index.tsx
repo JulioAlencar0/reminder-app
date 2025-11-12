@@ -1,5 +1,5 @@
 import { Image } from "expo-image";
-import { StatusBar, StyleSheet, Text, View } from "react-native";
+import { StatusBar, StyleSheet, Text, TextInput, View } from "react-native";
 
 export default function Index() {
   return (
@@ -10,6 +10,19 @@ export default function Index() {
         />
         <View style={styles.loginCreate}>
             <Text style={styles.loginCreateText}>Entre para acessar suas receitas</Text>
+            <Text style={styles.inputText}>E-mail</Text>
+            <TextInput style={styles.input}
+            placeholder="email@exemplo.com"
+            placeholderTextColor={"#293C4C"}
+            keyboardType="email-address"
+            >
+            </TextInput>
+            <Text style={styles.inputText}>Senha</Text>
+            <TextInput style={styles.input}
+            placeholder="********"
+            secureTextEntry={true}
+            >
+            </TextInput>
         </View>
     </View>
   );
@@ -41,5 +54,20 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     marginTop: 48,
     marginLeft: 32,
+  },
+  inputText:{
+    width: '90%',
+    marginLeft: 32,
+    marginTop: 40,
+  },
+  input:{
+    width: 350,
+    height: 56,
+    marginLeft: 32,
+    marginTop: 12,
+    paddingLeft: 16,
+    borderColor:'#000000',
+    borderWidth: 1,
+    borderRadius: 8,
   }
 })
