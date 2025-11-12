@@ -1,7 +1,12 @@
 import { Image } from "expo-image";
-import { StatusBar, StyleSheet, Text, TextInput, View } from "react-native";
+import { useRouter } from "expo-router";
+import { useState } from "react";
+import { StatusBar, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 
 export default function Index() {
+  const [senhaVisivel, setSenhaVisivel] = useState(false);
+  const router = useRouter()
+
   return (
     <View style={styles.container}>
       <StatusBar backgroundColor="#E4ECE9" barStyle="dark-content" />
@@ -18,11 +23,27 @@ export default function Index() {
             >
             </TextInput>
             <Text style={styles.inputText}>Senha</Text>
-            <TextInput style={styles.input}
-            placeholder="********"
-            secureTextEntry={true}
-            >
-            </TextInput>
+            <TextInput
+            style={styles.input}
+            secureTextEntry={!senhaVisivel}
+          />
+          <TouchableOpacity
+            style={styles.icon}
+            onPress={() => setSenhaVisivel(!senhaVisivel)}
+          >
+            <Image
+              source={
+                senhaVisivel
+                  ? require("../assets/images/eye.svg") 
+                  : require("../assets/images/eye-off.svg")     
+              }
+              style={styles.iconImg}
+            />
+            </TouchableOpacity>
+
+            <TouchableOpacity >
+                <Text style={styles.btnEnterText}>Entrar</Text>
+            </TouchableOpacity>
         </View>
     </View>
   );
@@ -69,5 +90,27 @@ const styles = StyleSheet.create({
     borderColor:'#000000',
     borderWidth: 1,
     borderRadius: 8,
-  }
+  },
+  icon:{
+    position: "absolute",
+    right: 42,
+    top: 277.2
+  },
+  iconImg:{
+    width: 28,
+    height: 28,
+  },
+  btnEnterText:{
+    width: 350,
+    height: 56,
+    backgroundColor: '#C02636',
+    color: '#FFFFFF',   
+    textAlign: 'center',
+    lineHeight: 55, 
+    borderRadius: 999,
+    marginTop: 40,
+    marginLeft: 32,
+    fontSize: 16,
+    fontWeight: '700',
+  },
 })
