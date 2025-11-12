@@ -1,5 +1,4 @@
 import { Image } from "expo-image";
-import { useRouter } from "expo-router";
 import { useEffect, useRef, useState } from "react";
 import {
   Animated,
@@ -13,52 +12,118 @@ import {
 
 export default function Index() {
   const [senhaVisivel, setSenhaVisivel] = useState(false);
-  const router = useRouter();
-
-  const slideAnim = useRef(new Animated.Value(300)).current; // Começa abaixo da tela
+  const [isCreatingAccount, setIsCreatingAccount] = useState(false);
+  const slideAnim = useRef(new Animated.Value(300)).current; // animação quando abre o app
+  const transitionAnim = useRef(new Animated.Value(0)).current; //animação da tela de login/criar conta
+  const fadeAnim = useRef(new Animated.Value(0)).current; // animação dos campos extras
+  const confirmSlide = useRef(new Animated.Value(20)).current;
 
   useEffect(() => {
     Animated.spring(slideAnim, {
       toValue: 0,
-      speed: 1.5, 
-      bounciness: 18, 
+      speed: 1.5,
+      bounciness: 18,
       useNativeDriver: true,
     }).start();
   }, []);
+
+  const toggleForm = () => {
+    const toValue = isCreatingAccount ? 0 : 1;
+
+    // anima o container principal
+    Animated.timing(transitionAnim, {
+      toValue,
+      duration: 400,
+      useNativeDriver: true,
+    }).start();
+
+    // anima o fade dos campos extras
+    Animated.parallel([
+      Animated.timing(fadeAnim, {
+        toValue: toValue,
+        duration: 400,
+        useNativeDriver: true,
+      }),
+      Animated.timing(confirmSlide, {
+        toValue: toValue ? 0 : 60,
+        duration: 400,
+        useNativeDriver: true,
+      }),
+    ]).start();
+
+    setIsCreatingAccount(!isCreatingAccount);
+  };
+
+  const translateY = transitionAnim.interpolate({
+    inputRange: [0, 1],
+    outputRange: [0, -25], // sobe um pouco a box no modo cadastro
+  });
 
   return (
     <View style={styles.container}>
       <StatusBar backgroundColor="#E4ECE9" barStyle="dark-content" />
 
-      <Image
-        style={styles.logo}
-        source={require("../assets/images/logo.svg")}
-      />
+      <Image style={styles.logo} source={require("../assets/images/logo.svg")} />
 
       <View style={styles.fundoBrancoFix}></View>
 
-      {/* Caixa animada com bounce */}
       <Animated.View
         style={[
           styles.loginCreate,
-          { transform: [{ translateY: slideAnim }] },
+          {
+            transform: [
+              { translateY: slideAnim },
+              { translateY: translateY },
+            ],
+            height: isCreatingAccount ? 580 : 480,
+          },
         ]}
       >
-        <Text style={styles.loginCreateText}>Entre para acessar suas receitas</Text>
+        <Text style={styles.loginCreateText}>
+          {isCreatingAccount
+            ? "Crie sua conta e comece agora"
+            : "Entre para acessar suas receitas"}
+        </Text>
 
         <Text style={styles.inputText}>E-mail</Text>
         <TextInput
           style={styles.input}
           placeholder="email@exemplo.com"
-          placeholderTextColor={"#293C4C"}
+          placeholderTextColor="#293C4C"
           keyboardType="email-address"
         />
 
         <Text style={styles.inputText}>Senha</Text>
-        <TextInput
-          style={styles.input}
-          secureTextEntry={!senhaVisivel}
-        />
+        <TextInput style={styles.input} secureTextEntry={!senhaVisivel} />
+
+        {/* Campo de confirmar senha com fade e slide */}
+        <Animated.View
+          style={{
+            opacity: fadeAnim,
+            transform: [{ translateY: confirmSlide }],
+          }}
+        >
+          <TouchableOpacity
+          style={styles.icon2}
+          onPress={() => setSenhaVisivel(!senhaVisivel)}
+        >
+          <Image
+            source={
+              senhaVisivel
+                ? require("../assets/images/eye.svg")
+                : require("../assets/images/eye-off.svg")
+            }
+            style={styles.iconImg}
+          />
+        </TouchableOpacity>
+          {isCreatingAccount && (
+            <>
+              <Text style={styles.inputText}>Confirmar senha</Text>
+              <TextInput style={styles.input} secureTextEntry={!senhaVisivel} />
+            </>
+            
+          )}
+        </Animated.View>
 
         <TouchableOpacity
           style={styles.icon}
@@ -75,12 +140,14 @@ export default function Index() {
         </TouchableOpacity>
 
         <TouchableOpacity>
-          <Text style={styles.btnEnterText}>Entrar</Text>
+          <Text style={styles.btnEnterText}>
+            {isCreatingAccount ? "Cadastrar" : "Entrar"}
+          </Text>
         </TouchableOpacity>
 
-        <TouchableOpacity onPress={() => router.push("/createAccount")}>
+        <TouchableOpacity onPress={toggleForm}>
           <Text style={[styles.btnEnterText, styles.btnCriarConta]}>
-            Criar uma conta
+            {isCreatingAccount ? "Já tenho uma conta" : "Criar uma conta"}
           </Text>
         </TouchableOpacity>
       </Animated.View>
@@ -98,21 +165,19 @@ const styles = StyleSheet.create({
   logo: {
     width: 255,
     height: 60,
-    top: -220,
+    top: -250,
   },
   fundoBrancoFix: {
-  position: "absolute",
-  bottom: 0,
-  width: "100%",
-  height: 300, 
-  backgroundColor: "#E4ECE9",
-  borderTopLeftRadius: 30,
-  borderTopRightRadius: 30,
-},
-
+    position: "absolute",
+    bottom: 0,
+    width: "100%",
+    height: 300,
+    backgroundColor: "#E4ECE9",
+    borderTopLeftRadius: 30,
+    borderTopRightRadius: 30,
+  },
   loginCreate: {
     width: "100%",
-    height: 480,
     backgroundColor: "#E4ECE9",
     position: "absolute",
     bottom: 0,
@@ -123,6 +188,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.2,
     shadowRadius: 8,
     elevation: 8,
+    overflow: "hidden",
   },
   loginCreateText: {
     fontSize: 16,
@@ -149,6 +215,11 @@ const styles = StyleSheet.create({
     position: "absolute",
     right: 42,
     top: 257.2,
+  },
+  icon2: {
+    position: "absolute",
+    right: 42,
+    top: 75,
   },
   iconImg: {
     width: 28,
