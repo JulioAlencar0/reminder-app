@@ -36,7 +36,7 @@ export default function home() {
     <Ionicons name="exit-outline" size={27} color="#C02636" />
     </TouchableOpacity>
         <View style={styles.content}>
-        <TouchableOpacity style={styles.btnRevenues}>
+        <TouchableOpacity style={styles.btnRevenues} onPress={() => router.push("/revenues")}>
             <View style={styles.boxIcon}>
             <Image style={styles.logoRevenues}
             source={require("../assets/images/newspaper.svg")}
@@ -46,7 +46,7 @@ export default function home() {
             <Text style={styles.subtitle}>Acompanhe os medicamentos e gerencie lembretes</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.btnRevenues}>
+        <TouchableOpacity style={styles.btnRevenues} onPress={() => router.push("/newRevenues")}>
             <View style={styles.boxIcon}>
             <Image style={styles.logoRevenues}
             source={require("../assets/images/medicine.svg")}
