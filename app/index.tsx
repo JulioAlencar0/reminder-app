@@ -1,4 +1,5 @@
 import { Image } from "expo-image";
+import { router } from "expo-router";
 import { useEffect, useRef, useState } from "react";
 import {
   Animated,
@@ -97,7 +98,6 @@ export default function Index() {
         <Text style={styles.inputText}>Senha</Text>
         <TextInput style={styles.input} secureTextEntry={!senhaVisivel} />
 
-        {/* Campo de confirmar senha com fade e slide */}
         <Animated.View
           style={{
             opacity: fadeAnim,
@@ -140,7 +140,7 @@ export default function Index() {
           />
         </TouchableOpacity>
 
-        <TouchableOpacity>
+        <TouchableOpacity onPress={() => router.push('/home')}>
           <Text style={styles.btnEnterText}>
             {isCreatingAccount ? "Cadastrar" : "Entrar"}
           </Text>
