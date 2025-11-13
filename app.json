@@ -4,10 +4,13 @@
     "slug": "reminder-app",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/logo.svg",
+    "icon": "./assets/images/logo2.png",
     "scheme": "reminderapp",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
+    "splash": {
+      "backgroundColor": "#C02636"
+    },
     "ios": {
       "supportsTablet": true
     },
@@ -19,7 +22,8 @@
         "monochromeImage": "./assets/images/android-icon-monochrome.png"
       },
       "edgeToEdgeEnabled": true,
-      "predictiveBackGestureEnabled": false
+      "predictiveBackGestureEnabled": false,
+      "package": "com.anonymous.reminderapp"
     },
     "web": {
       "output": "static",
@@ -30,8 +34,8 @@
       [
         "expo-splash-screen",
         {
-          "image": "./assets/images/splash-icon.png",
-          "imageWidth": 200,
+          "image": "./assets/images/splash-icon.svg",
+          "imageWidth": 300,
           "resizeMode": "contain",
           "backgroundColor": "#C02636",
           "dark": {

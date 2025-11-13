@@ -12,6 +12,7 @@ import {
 
 export default function Index() {
   const [senhaVisivel, setSenhaVisivel] = useState(false);
+  const [confirmSenhaVisivel, setConfirmSenhaVisivel] = useState(false);
   const [isCreatingAccount, setIsCreatingAccount] = useState(false);
   const slideAnim = useRef(new Animated.Value(300)).current; // animação quando abre o app
   const transitionAnim = useRef(new Animated.Value(0)).current; //animação da tela de login/criar conta
@@ -56,7 +57,7 @@ export default function Index() {
 
   const translateY = transitionAnim.interpolate({
     inputRange: [0, 1],
-    outputRange: [0, -25], // sobe um pouco a box no modo cadastro
+    outputRange: [0, -25], // sobe um pouco a box cadastro
   });
 
   return (
@@ -103,23 +104,23 @@ export default function Index() {
             transform: [{ translateY: confirmSlide }],
           }}
         >
+          {isCreatingAccount && (
+            <>
+              <Text style={styles.inputText}>Confirmar senha</Text>
+              <TextInput style={styles.input} secureTextEntry={!confirmSenhaVisivel} />
           <TouchableOpacity
           style={styles.icon2}
-          onPress={() => setSenhaVisivel(!senhaVisivel)}
+          onPress={() => setConfirmSenhaVisivel(!confirmSenhaVisivel)}
         >
           <Image
             source={
-              senhaVisivel
+              confirmSenhaVisivel
                 ? require("../assets/images/eye.svg")
                 : require("../assets/images/eye-off.svg")
             }
             style={styles.iconImg}
           />
         </TouchableOpacity>
-          {isCreatingAccount && (
-            <>
-              <Text style={styles.inputText}>Confirmar senha</Text>
-              <TextInput style={styles.input} secureTextEntry={!senhaVisivel} />
             </>
             
           )}
