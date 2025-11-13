@@ -1,3 +1,4 @@
+import Feather from '@expo/vector-icons/Feather';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { Image } from 'expo-image';
 import { router } from 'expo-router';
@@ -53,6 +54,13 @@ export default function home() {
             </View>
             <Text style={styles.title}>Nova receita </Text>
             <Text style={styles.subtitle}>Cadastre novos lembretes de receitas</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity style={styles.btnRate}>
+            <View style={styles.rateContent}>
+            <Feather style={styles.rateIcon} name="star" size={24} color="white" />
+            <Text style={styles.rateText}>Avaliar </Text>
+            </View>
         </TouchableOpacity>
         </View>
     </View>
@@ -117,10 +125,10 @@ const styles = StyleSheet.create({
         marginLeft: 16,
     },
     logoRevenues:{
-        width: 40,
-        height: 40, 
-        marginTop: 20,
-        marginLeft: 20,
+        width: 46,
+        height: 46, 
+        marginTop: 16.5,
+        marginLeft: 16.5,
     },
     title:{
         position: 'absolute',
@@ -135,5 +143,28 @@ const styles = StyleSheet.create({
         marginTop: 50,
         marginLeft: 110,
         color: '#606F7B',
+    },
+    btnRate:{
+        backgroundColor: '#17222B',
+        borderRadius: 999,
+        marginTop: 230,
+        width: 326,
+        height: 56,
+    },
+    rateContent:{
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    rateText:{
+        color: '#FFFFFF',
+        lineHeight: 56,
+        fontSize: 16,
+        fontWeight: '700',
+        left: 20,
+    },
+    rateIcon:{
+        position: 'absolute',
+        left: 120,
+        top: 16,
     },
 })
