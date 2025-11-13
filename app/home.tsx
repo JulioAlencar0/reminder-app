@@ -32,11 +32,28 @@ export default function home() {
         );
     }}
     >
-    <Ionicons name="exit-outline" size={27} color="red" />
+    <Ionicons name="exit-outline" size={27} color="#C02636" />
     </TouchableOpacity>
         <View style={styles.content}>
-      <Text>Home Screen</Text>
+        <TouchableOpacity style={styles.btnRevenues}>
+            <View style={styles.boxIcon}>
+            <Image style={styles.logoRevenues}
+            source={require("../assets/images/newspaper.svg")}
+            />
+            </View>
+            <Text style={styles.title}>Minhas receitas </Text>
+            <Text style={styles.subtitle}>Acompanhe os medicamentos e gerencie lembretes</Text>
+        </TouchableOpacity>
 
+        <TouchableOpacity style={styles.btnRevenues}>
+            <View style={styles.boxIcon}>
+            <Image style={styles.logoRevenues}
+            source={require("../assets/images/medicine.svg")}
+            />
+            </View>
+            <Text style={styles.title}>Nova receita </Text>
+            <Text style={styles.subtitle}>Cadastre novos lembretes de receitas</Text>
+        </TouchableOpacity>
         </View>
     </View>
   )
@@ -80,6 +97,43 @@ const styles = StyleSheet.create({
         borderTopLeftRadius: 30,
         borderTopRightRadius: 30,
         alignItems: 'center',
-    }
+    },
+    btnRevenues:{
+        width: 326,
+        height: 112,
+        marginTop: 40,
+        borderRadius: 12,
+        backgroundColor: '#E8EEF3',
+        borderColor: '#D7E1EA',
+        borderWidth: 1,
+        
+    },
+    boxIcon:{
+        width: 80,
+        height: 80,
+        backgroundColor: '#D7E1EA',
+        borderRadius: 12,
+        marginTop: 16,
+        marginLeft: 16,
+    },
+    logoRevenues:{
+        width: 40,
+        height: 40, 
+        marginTop: 20,
+        marginLeft: 20,
+    },
+    title:{
+        position: 'absolute',
+        fontSize: 18,
+        fontWeight: 'bold',
+        marginTop: 20,
+        marginLeft: 110,
+    },
+    subtitle:{
+        position: 'absolute',
+        fontSize: 14,
+        marginTop: 50,
+        marginLeft: 110,
+        color: '#606F7B',
+    },
 })
-
