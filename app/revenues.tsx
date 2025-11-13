@@ -78,7 +78,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   card: {
-    backgroundColor: "#E9EFF5",
+    backgroundColor: "#E8EEF3",
     width: "85%",
     borderRadius: 16,
     padding: 16,
@@ -88,12 +88,15 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
     marginBottom: 8,
+
   },
   infoRow: {
     flexDirection: "row",
     alignItems: "center",
-  },
-  infoText: {
+    borderRadius: 8,
+},
+infoText: {
+    backgroundColor: "#CAD7E2",
     fontSize: 13,
     marginLeft: 4,
   },
