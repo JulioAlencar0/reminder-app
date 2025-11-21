@@ -20,21 +20,17 @@ export default function home() {
         Acompanhe seus medicamentos cadastrados e gerencie lembretes
       </Text>
 
-      <View style={styles.content}>
-        {/* Exemplo de card */}
-        <View style={styles.card}>
-          <Text style={styles.medName}>Paracetamol</Text>
-          <View style={styles.infoRow}>
-            <Feather name="clock" size={16} color="#334FDC" />
-            <Text style={styles.infoText}>14:00</Text>
-            <Feather name="refresh-cw" size={16} color="#334FDC" style={{ marginLeft: 10 }} />
-            <Text style={styles.infoText}>A cada 12 horas</Text>
-          </View>
-          <TouchableOpacity style={styles.trashBtn}>
-            <Feather name="trash-2" size={20} color="red" />
-          </TouchableOpacity>
+     <View style={styles.content}>
+      <View style={styles.card}>
+        <Text style={styles.textTitle}>Nome do remedio</Text>
+        <TouchableOpacity style={styles.btnTrash}>
+          <Feather name="trash-2" size={20} color="#C02636" />
+        </TouchableOpacity>
+        <View>
+          
         </View>
       </View>
+     </View>
     </View>
   );
 }
@@ -81,28 +77,18 @@ const styles = StyleSheet.create({
     backgroundColor: "#E8EEF3",
     width: "85%",
     borderRadius: 16,
-    padding: 16,
-    marginBottom: 16,
+    height: 90,
   },
-  medName: {
+  textTitle:{
     fontSize: 16,
     fontWeight: 'bold',
-    marginBottom: 8,
-
+    marginTop: 20,
+    marginLeft: 20,
   },
-  infoRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    borderRadius: 8,
-},
-infoText: {
-    backgroundColor: "#CAD7E2",
-    fontSize: 13,
-    marginLeft: 4,
-  },
-  trashBtn: {
+  btnTrash: {
     position: "absolute",
     right: 16,
     top: 16,
   },
+  
 });

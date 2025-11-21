@@ -8,16 +8,17 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
-  View,
+  View
 } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function Index() {
   const [senhaVisivel, setSenhaVisivel] = useState(false);
-  const [confirmSenhaVisivel, setConfirmSenhaVisivel] = useState(false);
   const [isCreatingAccount, setIsCreatingAccount] = useState(false);
-  const slideAnim = useRef(new Animated.Value(300)).current; // animação quando abre o app
-  const transitionAnim = useRef(new Animated.Value(0)).current; //animação da tela de login/criar conta
-  const fadeAnim = useRef(new Animated.Value(0)).current; // animação dos campos extras
+
+  const slideAnim = useRef(new Animated.Value(300)).current;
+  const transitionAnim = useRef(new Animated.Value(0)).current;
+  const fadeAnim = useRef(new Animated.Value(0)).current;
   const confirmSlide = useRef(new Animated.Value(20)).current;
 
   useEffect(() => {
@@ -32,17 +33,15 @@ export default function Index() {
   const toggleForm = () => {
     const toValue = isCreatingAccount ? 0 : 1;
 
-    // anima o container principal
     Animated.timing(transitionAnim, {
       toValue,
       duration: 400,
       useNativeDriver: true,
     }).start();
 
-    // anima o fade dos campos extras
     Animated.parallel([
       Animated.timing(fadeAnim, {
-        toValue: toValue,
+        toValue,
         duration: 400,
         useNativeDriver: true,
       }),
@@ -58,14 +57,17 @@ export default function Index() {
 
   const translateY = transitionAnim.interpolate({
     inputRange: [0, 1],
-    outputRange: [0, -25], // sobe um pouco a box cadastro
+    outputRange: [0, -2],
   });
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <StatusBar backgroundColor="#E4ECE9" barStyle="dark-content" />
 
-      <Image style={styles.logo} source={require("../assets/images/logo.svg")} />
+      <Image
+        style={styles.logo}
+        source={require("../assets/images/logo.svg")}
+      />
 
       <View style={styles.fundoBrancoFix}></View>
 
@@ -73,11 +75,8 @@ export default function Index() {
         style={[
           styles.loginCreate,
           {
-            transform: [
-              { translateY: slideAnim },
-              { translateY: translateY },
-            ],
-            height: isCreatingAccount ? 580 : 480,
+            transform: [{ translateY: slideAnim }, { translateY }],
+            height: isCreatingAccount ? 600 : 480,
           },
         ]}
       >
@@ -87,6 +86,7 @@ export default function Index() {
             : "Entre para acessar suas receitas"}
         </Text>
 
+        {/* E-MAIL */}
         <Text style={styles.inputText}>E-mail</Text>
         <TextInput
           style={styles.input}
@@ -95,9 +95,32 @@ export default function Index() {
           keyboardType="email-address"
         />
 
+        {/* SENHA */}
         <Text style={styles.inputText}>Senha</Text>
-        <TextInput style={styles.input} secureTextEntry={!senhaVisivel} />
+        <View style={styles.inputWrapper}>
+          <TextInput
+            style={styles.input}
+            secureTextEntry={!senhaVisivel}
+            placeholder="••••••••••"
+            placeholderTextColor="#293C4C"
+          />
 
+          <TouchableOpacity
+            style={styles.eyeButton}
+            onPress={() => setSenhaVisivel(!senhaVisivel)}
+          >
+            <Image
+              source={
+                senhaVisivel
+                  ? require("../assets/images/eye-off.svg")
+                  : require("../assets/images/eye.svg")
+              }
+              style={styles.eyeIcon}
+            />
+          </TouchableOpacity>
+        </View>
+
+        {/* NOME — aparece só no modo criar conta */}
         <Animated.View
           style={{
             opacity: fadeAnim,
@@ -106,53 +129,27 @@ export default function Index() {
         >
           {isCreatingAccount && (
             <>
-              <Text style={styles.inputText}>Confirmar senha</Text>
-              <TextInput style={styles.input} secureTextEntry={!confirmSenhaVisivel} />
-          <TouchableOpacity
-          style={styles.icon2}
-          onPress={() => setConfirmSenhaVisivel(!confirmSenhaVisivel)}
-        >
-          <Image
-            source={
-              confirmSenhaVisivel
-                ? require("../assets/images/eye.svg")
-                : require("../assets/images/eye-off.svg")
-            }
-            style={styles.iconImg}
-          />
-        </TouchableOpacity>
+              <Text style={styles.inputText}>Nome</Text>
+              <TextInput style={styles.input} keyboardType="default" placeholder="Ex: Júlio César" placeholderTextColor={"#293C4C"} />
             </>
-            
           )}
         </Animated.View>
 
-        <TouchableOpacity
-          style={styles.icon}
-          onPress={() => setSenhaVisivel(!senhaVisivel)}
-        >
-          <Image
-            source={
-              senhaVisivel
-                ? require("../assets/images/eye.svg")
-                : require("../assets/images/eye-off.svg")
-            }
-            style={styles.iconImg}
-          />
-        </TouchableOpacity>
-
-        <TouchableOpacity onPress={() => router.push('/home')}>
+        {/* BOTÃO PRINCIPAL */}
+        <TouchableOpacity onPress={() => router.navigate("/home")}>
           <Text style={styles.btnEnterText}>
             {isCreatingAccount ? "Cadastrar" : "Entrar"}
           </Text>
         </TouchableOpacity>
 
+        {/* BOTÃO SECUNDÁRIO */}
         <TouchableOpacity onPress={toggleForm}>
           <Text style={[styles.btnEnterText, styles.btnCriarConta]}>
             {isCreatingAccount ? "Já tenho uma conta" : "Criar uma conta"}
           </Text>
         </TouchableOpacity>
       </Animated.View>
-    </View>
+    </SafeAreaView>
   );
 }
 
@@ -170,17 +167,18 @@ const styles = StyleSheet.create({
   },
   fundoBrancoFix: {
     position: "absolute",
-    bottom: 0,
+    marginTop: 600,
     width: "100%",
-    height: 300,
+    height: 500,
     backgroundColor: "#ffffff",
     borderTopLeftRadius: 30,
     borderTopRightRadius: 30,
   },
   loginCreate: {
-    width: "100%",
-    backgroundColor: "#ffffff",
     position: "absolute",
+    width: "100%",
+    paddingHorizontal: 32,
+    backgroundColor: "#ffffff",
     bottom: 0,
     borderTopRightRadius: 30,
     borderTopLeftRadius: 30,
@@ -195,39 +193,40 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "600",
     marginTop: 48,
-    marginLeft: 32,
   },
   inputText: {
-    width: "90%",
-    marginLeft: 32,
+    width: "100%",
     marginTop: 30,
   },
+
+  /* INPUTS */
+  inputWrapper: {
+    position: "relative",
+    width: "100%",
+    justifyContent: "center",
+  },
   input: {
-    width: 350,
+    width: "100%",
     height: 56,
-    marginLeft: 32,
     marginTop: 12,
-    paddingLeft: 16,
     borderColor: "#000000",
-    borderWidth: 1,
+    borderWidth: 0.5,
     borderRadius: 8,
+    paddingHorizontal: 16,
   },
-  icon: {
+
+  eyeButton: {
     position: "absolute",
-    right: 42,
-    top: 257.2,
+    right: 16,
+    top: 26,
+    padding: 5,
   },
-  icon2: {
-    position: "absolute",
-    right: 42,
-    top: 75,
+  eyeIcon: {
+    width: 24,
+    height: 24,
   },
-  iconImg: {
-    width: 28,
-    height: 28,
-  },
+
   btnEnterText: {
-    width: 350,
     height: 56,
     backgroundColor: "#C02636",
     color: "#FFFFFF",
@@ -235,7 +234,6 @@ const styles = StyleSheet.create({
     lineHeight: 55,
     borderRadius: 999,
     marginTop: 30,
-    marginLeft: 32,
     fontSize: 16,
     fontWeight: "700",
   },

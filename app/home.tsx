@@ -1,5 +1,6 @@
 import Feather from '@expo/vector-icons/Feather';
-import Ionicons from '@expo/vector-icons/Ionicons';
+import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
+import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { Image } from 'expo-image';
 import { router } from 'expo-router';
 import React from 'react';
@@ -25,7 +26,7 @@ export default function home() {
             },
             {
             text: "Sair",
-            onPress: () => router.push("/"),
+            onPress: () => router.navigate("/"),
             style: "destructive",
             },
         ],
@@ -33,7 +34,7 @@ export default function home() {
         );
     }}
     >
-    <Ionicons name="exit-outline" size={27} color="#C02636" />
+    <FontAwesome6 name="arrow-right-from-bracket" size={24} color="#C02636" />
     </TouchableOpacity>
         <View style={styles.content}>
         <TouchableOpacity style={styles.btnRevenues} onPress={() => router.push("/revenues")}>
@@ -44,6 +45,7 @@ export default function home() {
             </View>
             <Text style={styles.title}>Minhas receitas </Text>
             <Text style={styles.subtitle}>Acompanhe os medicamentos e gerencie lembretes</Text>
+            <MaterialIcons style={styles.arrowIcon} name="arrow-forward-ios" size={20} color="#A2B9CD" />
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.btnRevenues} onPress={() => router.push("/newRevenues")}>
@@ -54,6 +56,7 @@ export default function home() {
             </View>
             <Text style={styles.title}>Nova receita </Text>
             <Text style={styles.subtitle}>Cadastre novos lembretes de receitas</Text>
+            <MaterialIcons style={styles.arrowIcon}name="arrow-forward-ios" size={20} color="#A2B9CD" />
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.btnRate}>
@@ -143,6 +146,12 @@ const styles = StyleSheet.create({
         marginTop: 50,
         marginLeft: 110,
         color: '#606F7B',
+        marginRight: 16,
+    },
+    arrowIcon:{
+        position: 'absolute',
+        right: 10,
+        top: 18,
     },
     btnRate:{
         backgroundColor: '#17222B',
