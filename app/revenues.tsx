@@ -11,7 +11,7 @@ export default function Home() {
         <Feather name="arrow-left" size={24} color="black" />
       </TouchableOpacity>
 
-      <TouchableOpacity style={styles.btnPlus} onPress={() => router.replace("/newRevenues")}>
+      <TouchableOpacity style={styles.btnPlus} onPress={() => router.navigate("/newRevenues")}>
         <FontAwesome6 name="circle-plus" size={34} color="#334FDC" />
       </TouchableOpacity>
 
@@ -22,7 +22,6 @@ export default function Home() {
 
      <View style={styles.content}>
       <View style={styles.card}>
-        {/* topo: título + lixeira em linha */}
         <View style={styles.cardTop}>
           <Text style={styles.textTitle}>Nome do remédio</Text>
           <TouchableOpacity style={styles.btnTrash}>
@@ -30,7 +29,6 @@ export default function Home() {
           </TouchableOpacity>
         </View>
 
-        {/* linha das badges (lado a lado) */}
         <View style={styles.chipsRow}>
           <View style={styles.subtitleCard}>
             <Feather name="clock" size={16} color="#4D708F" style={styles.cardIcon} />
