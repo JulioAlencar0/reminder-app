@@ -2,16 +2,67 @@ import { Feather } from "@expo/vector-icons";
 import { router } from "expo-router";
 import React, { useState } from "react";
 import {
-    Alert, StyleSheet,
-    Switch,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View
+  Alert,
+  Modal,
+  StyleSheet,
+  Switch,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  TouchableWithoutFeedback,
+  View,
 } from "react-native";
+
+import { Picker } from "@react-native-picker/picker";
+import DateTimePickerModal from "react-native-modal-datetime-picker";
 
 export default function NovaReceita() {
   const [tomarAgora, setTomarAgora] = useState(false);
+
+  // Nome do Remédio
+  const [name, setName] = useState("");
+
+  // Horário
+  const [time, setTime] = useState("");
+  const [isTimePickerVisible, setTimePickerVisible] = useState(false);
+
+  const showTimePicker = () => setTimePickerVisible(true);
+  const hideTimePicker = () => setTimePickerVisible(false);
+
+  const handleConfirmTime = (date: Date) => {
+    const hour = date.getHours().toString().padStart(2, "0");
+    const min = date.getMinutes().toString().padStart(2, "0");
+    setTime(`${hour}:${min}`);
+    hideTimePicker();
+  };
+
+  // Recorrência
+  const [recurrence, setRecurrence] = useState("");
+  const [openRecurrencePicker, setOpenRecurrencePicker] = useState(false);
+
+  // ENVIO PARA TELA REVENUES
+  const handleAdd = () => {
+    if (!name || !time || !recurrence) {
+      Alert.alert("Ops!", "Preencha todos os campos.");
+      return;
+    }
+
+    const newRevenue = {
+      name,
+      time,
+      recurrence,
+      tomarAgora,
+    };
+
+    Alert.alert("Sucesso!", "Receita adicionada com sucesso.");
+
+    router.push({
+      pathname: "/revenues",
+      params: {
+        newRevenue: JSON.stringify(newRevenue),
+      },
+    });
+  };
 
   return (
     <View style={styles.container}>
@@ -25,30 +76,83 @@ export default function NovaReceita() {
         seu medicamento
       </Text>
 
+      {/* Remédio */}
       <Text style={styles.label}>Remédio</Text>
-      <TextInput style={styles.input} placeholder="Nome do medicamento" placeholderTextColor={'#293C4C'}/>
+      <TextInput
+        style={styles.input}
+        placeholder="Nome do medicamento"
+        placeholderTextColor={"#293C4C"}
+        value={name}
+        onChangeText={setName}
+      />
 
+      {/* Horário */}
       <Text style={styles.label}>Horário</Text>
-      <TextInput style={styles.input} placeholder="00:00" placeholderTextColor={'#293C4C'} />
+
+      <TouchableOpacity style={styles.input} onPress={showTimePicker}>
+        <Text style={{ color: time ? "#000" : "#293C4C", fontSize: 16 }}>
+          {time || "00:00"}
+        </Text>
+      </TouchableOpacity>
+
+      <DateTimePickerModal
+        isVisible={isTimePickerVisible}
+        mode="time"
+        locale="pt-BR"
+        is24Hour
+        onConfirm={handleConfirmTime}
+        onCancel={hideTimePicker}
+      />
 
       <Text style={styles.label}>Recorrência</Text>
-      <TextInput style={styles.input} placeholder="Selecione" placeholderTextColor={'#293C4C'} />
 
+      <TouchableOpacity
+        style={styles.input}
+        onPress={() => setOpenRecurrencePicker(true)}
+      >
+        <Text style={{ color: recurrence ? "#000" : "#293C4C", fontSize: 16 }}>
+          {recurrence || "Selecione"}
+        </Text>
+      </TouchableOpacity>
+
+      {/* MODAL DO PICKER */}
+      <Modal visible={openRecurrencePicker} transparent animationType="slide">
+        <TouchableWithoutFeedback
+          onPress={() => setOpenRecurrencePicker(false)}
+        >
+          <View style={styles.overlay} />
+        </TouchableWithoutFeedback>
+
+        <View style={styles.pickerContainer}>
+          <Picker
+            selectedValue={recurrence}
+            onValueChange={(value) => {
+              setRecurrence(value);
+              setOpenRecurrencePicker(false);
+            }}
+          >
+            <Picker.Item label="Selecione..." value="" />
+            <Picker.Item label="A cada 6 horas" value="A cada 6 horas" />
+            <Picker.Item label="A cada 8 horas" value="A cada 8 horas" />
+            <Picker.Item label="A cada 12 horas" value="A cada 12 horas" />
+            <Picker.Item label="A cada 24 horas" value="A cada 24 horas" />
+          </Picker>
+        </View>
+      </Modal>
+
+      {/* Switch */}
       <View style={styles.switchRow}>
         <Switch
-            value={tomarAgora}
-            onValueChange={setTomarAgora}
-            trackColor={{ false: "#767577", true: "#C02636" }}
-            thumbColor="#fff"
+          value={tomarAgora}
+          onValueChange={setTomarAgora}
+          trackColor={{ false: "#767577", true: "#C02636" }}
+          thumbColor="#fff"
         />
-
         <Text style={styles.switchText}>Tomar agora</Text>
       </View>
 
-      <TouchableOpacity style={styles.btnAdd} onPress={() => {
-            Alert.alert("Sucesso!", "Receita adicionada com sucesso.");
-            router.back();
-        }}>
+      {/* Botão */}
+      <TouchableOpacity style={styles.btnAdd} onPress={handleAdd}>
         <Text style={styles.btnAddText}>+ Adicionar</Text>
       </TouchableOpacity>
     </View>
@@ -87,8 +191,20 @@ const styles = StyleSheet.create({
     width: 366,
     height: 56,
     paddingLeft: 16,
+    justifyContent: "center",
     marginTop: 10,
   },
+
+  overlay: {
+    flex: 1,
+    backgroundColor: "rgba(0,0,0,0.35)",
+  },
+
+  pickerContainer: {
+    backgroundColor: "#fff",
+    paddingBottom: 30,
+  },
+
   switchRow: {
     flexDirection: "row",
     alignItems: "center",
@@ -99,13 +215,13 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   btnAdd: {
-  backgroundColor: "#C02636",
-  borderRadius: 999,
-  marginTop: "auto",
-  alignItems: "center",
-  paddingVertical: 14,
-  marginBottom: 30,
-},
+    backgroundColor: "#C02636",
+    borderRadius: 999,
+    marginTop: "auto",
+    alignItems: "center",
+    paddingVertical: 14,
+    marginBottom: 30,
+  },
   btnAddText: {
     color: "#fff",
     fontSize: 16,

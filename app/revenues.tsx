@@ -1,17 +1,63 @@
-import Feather from '@expo/vector-icons/Feather';
-import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
-import { router } from 'expo-router';
-import React from 'react';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Feather, FontAwesome6 } from '@expo/vector-icons';
+import { router, useLocalSearchParams } from 'expo-router';
+import React, { useEffect, useState } from 'react';
+import { FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
-export default function Home() {
+export default function Revenues() {
+  const handleDelete = (id: string) => {
+  setRevenues(prev => prev.filter(item => item.id !== id));
+};
+
+  const [revenues, setRevenues] = useState([
+    {
+      id: "1",
+      name: "Nome do remédio",
+      time: "14:00",
+      recurrence: "A cada 12 horas",
+    }
+  ]);
+
+  const params = useLocalSearchParams();
+
+  useEffect(() => {
+  if (params?.newRevenue) {
+    const newRevenueParam = Array.isArray(params.newRevenue)
+      ? params.newRevenue[0]
+      : params.newRevenue;
+
+    if (typeof newRevenueParam !== "string") return;
+
+    try {
+      const parsed = JSON.parse(newRevenueParam);
+
+      setRevenues(prev => [
+        ...prev,
+        {
+          id: Date.now().toString(),
+          name: parsed.name,
+          time: parsed.time,
+          recurrence: parsed.recurrence,
+        }
+      ]);
+    } catch (e) {
+      console.warn("Failed to parse newRevenue:", e);
+    }
+  }
+}, [params?.newRevenue]); 
+
+
   return (
     <View style={styles.container}>
       <TouchableOpacity style={styles.btnBack} onPress={() => router.replace("/home")}>
         <Feather name="arrow-left" size={24} color="black" />
       </TouchableOpacity>
 
-      <TouchableOpacity style={styles.btnPlus} onPress={() => router.navigate("/newRevenues")}>
+      <TouchableOpacity
+        style={styles.btnPlus}
+        onPress={() =>
+          router.push("/newRevenues")
+        }
+      >
         <FontAwesome6 name="circle-plus" size={34} color="#334FDC" />
       </TouchableOpacity>
 
@@ -20,28 +66,36 @@ export default function Home() {
         Acompanhe seus medicamentos cadastrados e gerencie lembretes
       </Text>
 
-     <View style={styles.content}>
-      <View style={styles.card}>
-        <View style={styles.cardTop}>
-          <Text style={styles.textTitle}>Nome do remédio</Text>
-          <TouchableOpacity style={styles.btnTrash}>
-            <Feather name="trash-2" size={20} color="#C02636" />
-          </TouchableOpacity>
-        </View>
+      <View style={styles.content}>
+        <FlatList
+          data={revenues}
+          keyExtractor={(item) => item.id}
+          renderItem={({ item }) => (
+            <View style={styles.card}>
+              <View style={styles.cardTop}>
+                <Text style={styles.textTitle}>{item.name}</Text>
 
-        <View style={styles.chipsRow}>
-          <View style={styles.subtitleCard}>
-            <Feather name="clock" size={16} color="#4D708F" style={styles.cardIcon} />
-            <Text style={styles.chipText}>14:00</Text>
-          </View>
+                <TouchableOpacity style={styles.btnTrash} onPress={() => handleDelete(item.id)}>
+                  <Feather name="trash-2" size={20} color="#C02636" />
+                  
+                </TouchableOpacity>
+              </View>
 
-          <View style={styles.subtitleCard2}>
-            <FontAwesome6 name="arrow-right-arrow-left" size={16} color="#4D708F" style={styles.cardIcon} />
-            <Text style={styles.chipText}>A cada 12 horas</Text>
-          </View>
-        </View>
+              <View style={styles.chipsRow}>
+                <View style={styles.subtitleCard}>
+                  <Feather name="clock" size={16} color="#4D708F" style={styles.cardIcon} />
+                  <Text style={styles.chipText}>{item.time}</Text>
+                </View>
+
+                <View style={styles.subtitleCard2}>
+                  <FontAwesome6 name="arrow-right-arrow-left" size={16} color="#4D708F" style={styles.cardIcon} />
+                  <Text style={styles.chipText}>{item.recurrence}</Text>
+                </View>
+              </View>
+            </View>
+          )}
+        />
       </View>
-     </View>
     </View>
   );
 }
@@ -87,10 +141,11 @@ const styles = StyleSheet.create({
   },
   card: {
     backgroundColor: "#E8EEF3",
-    width: "85%",
+    width: 366,
     borderRadius: 16,
     paddingVertical: 12,
     paddingHorizontal: 12,
+    marginBottom: 16,
   },
   cardTop: {
     flexDirection: "row",
