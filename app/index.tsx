@@ -136,7 +136,7 @@ export default function Index() {
         </Animated.View>
 
         {/* BOTÃO PRINCIPAL */}
-        <TouchableOpacity onPress={() => router.navigate("/home")}>
+        <TouchableOpacity onPress={() => router.replace("/home")}>
           <Text style={styles.btnEnterText}>
             {isCreatingAccount ? "Cadastrar" : "Entrar"}
           </Text>

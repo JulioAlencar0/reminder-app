@@ -4,14 +4,14 @@ import { router } from 'expo-router';
 import React from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
-export default function home() {
+export default function Home() {
   return (
     <View style={styles.container}>
-      <TouchableOpacity style={styles.btnBack} onPress={() => router.push("/home")}>
+      <TouchableOpacity style={styles.btnBack} onPress={() => router.replace("/home")}>
         <Feather name="arrow-left" size={24} color="black" />
       </TouchableOpacity>
 
-      <TouchableOpacity style={styles.btnPlus} onPress={() => router.push("/newRevenues")}>
+      <TouchableOpacity style={styles.btnPlus} onPress={() => router.replace("/newRevenues")}>
         <FontAwesome6 name="circle-plus" size={34} color="#334FDC" />
       </TouchableOpacity>
 
@@ -22,12 +22,25 @@ export default function home() {
 
      <View style={styles.content}>
       <View style={styles.card}>
-        <Text style={styles.textTitle}>Nome do remedio</Text>
-        <TouchableOpacity style={styles.btnTrash}>
-          <Feather name="trash-2" size={20} color="#C02636" />
-        </TouchableOpacity>
-        <View>
-          
+        {/* topo: título + lixeira em linha */}
+        <View style={styles.cardTop}>
+          <Text style={styles.textTitle}>Nome do remédio</Text>
+          <TouchableOpacity style={styles.btnTrash}>
+            <Feather name="trash-2" size={20} color="#C02636" />
+          </TouchableOpacity>
+        </View>
+
+        {/* linha das badges (lado a lado) */}
+        <View style={styles.chipsRow}>
+          <View style={styles.subtitleCard}>
+            <Feather name="clock" size={16} color="#4D708F" style={styles.cardIcon} />
+            <Text style={styles.chipText}>14:00</Text>
+          </View>
+
+          <View style={styles.subtitleCard2}>
+            <FontAwesome6 name="arrow-right-arrow-left" size={16} color="#4D708F" style={styles.cardIcon} />
+            <Text style={styles.chipText}>A cada 12 horas</Text>
+          </View>
         </View>
       </View>
      </View>
@@ -61,6 +74,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     marginTop: 10,
     marginLeft: 25,
+    paddingRight: 30
   },
   content: {
     position: 'absolute',
@@ -77,18 +91,49 @@ const styles = StyleSheet.create({
     backgroundColor: "#E8EEF3",
     width: "85%",
     borderRadius: 16,
-    height: 90,
+    paddingVertical: 12,
+    paddingHorizontal: 12,
+  },
+  cardTop: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
   },
   textTitle:{
     fontSize: 16,
     fontWeight: 'bold',
-    marginTop: 20,
-    marginLeft: 20,
   },
   btnTrash: {
-    position: "absolute",
-    right: 16,
-    top: 16,
+    padding: 6,
   },
-  
+  chipsRow: {
+    flexDirection: "row",
+    marginTop: 10,
+    alignItems: "center",
+  },
+  subtitleCard:{
+    paddingHorizontal: 10,
+    height: 32,
+    borderRadius: 9999,
+    justifyContent: "center",
+    alignItems: "center",
+    flexDirection: "row",
+    backgroundColor: "#CAD7E2",
+    marginRight: 10, 
+  },
+  subtitleCard2:{
+    paddingHorizontal: 12,
+    height: 32,
+    borderRadius: 9999,
+    justifyContent: "center",
+    alignItems: "center",
+    flexDirection: "row",
+    backgroundColor: "#CAD7E2",
+  },
+  cardIcon:{
+    marginRight: 6
+  },
+  chipText: {
+    fontSize: 13
+  }
 });

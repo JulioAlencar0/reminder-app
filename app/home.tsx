@@ -9,6 +9,7 @@ import { Alert, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 export default function home() {
   return (
+    
     <View style={styles.container}>
         <Image style={styles.icon}
         source={require("../assets/images/icon.png")}
@@ -26,7 +27,7 @@ export default function home() {
             },
             {
             text: "Sair",
-            onPress: () => router.navigate("/"),
+            onPress: () => router.replace("/"),
             style: "destructive",
             },
         ],
