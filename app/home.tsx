@@ -31,7 +31,7 @@ export default function Home() {
     <SafeAreaView style={styles.container}>
       
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => Alert.alert("Editar perfil", "Aqui abrirá o modal futuramente")}>
+        <TouchableOpacity onPress={() => Alert.alert("modal")}>
           <Image 
             style={styles.icon}
             source={require("../assets/images/icon.png")}
@@ -124,9 +124,9 @@ const styles = StyleSheet.create({
         marginLeft: 25,
     },
     subWelcome:{
-        fontSize: 22,
+        fontSize: 25,
         fontWeight: 'bold',
-        marginLeft: 24,
+        marginLeft: 28,
     },
     btnExit:{
         position: 'absolute',
