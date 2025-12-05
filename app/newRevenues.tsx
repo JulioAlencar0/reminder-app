@@ -3,6 +3,7 @@ import { router } from "expo-router";
 import React, { useState } from "react";
 import {
   Alert,
+  Keyboard,
   Modal,
   StyleSheet,
   Switch,
@@ -15,6 +16,7 @@ import {
 
 import { Picker } from "@react-native-picker/picker";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function NovaReceita() {
   const [tomarAgora, setTomarAgora] = useState(false);
@@ -65,7 +67,9 @@ export default function NovaReceita() {
   };
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+      <View style={styles.container}>
       <TouchableOpacity style={styles.btnBack} onPress={() => router.back()}>
         <Feather name="arrow-left" size={24} color="black" />
       </TouchableOpacity>
@@ -155,7 +159,9 @@ export default function NovaReceita() {
       <TouchableOpacity style={styles.btnAdd} onPress={handleAdd}>
         <Text style={styles.btnAddText}>+ Adicionar</Text>
       </TouchableOpacity>
-    </View>
+      </View>
+      </TouchableWithoutFeedback>
+    </SafeAreaView>
   );
 }
 
@@ -163,7 +169,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#ffffff",
-    padding: 24,
+    
   },
   btnBack: {
     marginTop: 60,
@@ -177,12 +183,13 @@ const styles = StyleSheet.create({
   subtitle: {
     fontSize: 14,
     marginTop: 10,
+    marginLeft: 24,
   },
   label: {
     marginTop: 25,
     fontSize: 14,
     fontWeight: "600",
-  },
+    marginLeft: 24,},
   input: {
     backgroundColor: "#fff",
     borderRadius: 8,
@@ -193,6 +200,7 @@ const styles = StyleSheet.create({
     paddingLeft: 16,
     justifyContent: "center",
     marginTop: 10,
+    alignSelf: "center",
   },
 
   overlay: {
@@ -206,7 +214,6 @@ const styles = StyleSheet.create({
   },
 
   switchRow: {
-    flexDirection: "row",
     alignItems: "center",
     marginTop: 20,
   },
@@ -217,10 +224,12 @@ const styles = StyleSheet.create({
   btnAdd: {
     backgroundColor: "#C02636",
     borderRadius: 999,
-    marginTop: "auto",
+    marginTop: 160,
     alignItems: "center",
     paddingVertical: 14,
     marginBottom: 30,
+    width: 366,
+    alignSelf: "center",
   },
   btnAddText: {
     color: "#fff",

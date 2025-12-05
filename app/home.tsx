@@ -1,80 +1,113 @@
 import Feather from '@expo/vector-icons/Feather';
 import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
+import axios from "axios";
 import { Image } from 'expo-image';
-import { router } from 'expo-router';
-import React from 'react';
+import { router, useLocalSearchParams } from 'expo-router';
+import React, { useEffect, useState } from 'react';
 import { Alert, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+
+export default function Home() {
+
+  const { userId } = useLocalSearchParams(); 
+  const [userName, setUserName] = useState("");
+
+  useEffect(() => {
+  if (!userId) return; 
+  async function loadUser() {
+    try {
+      const response = await axios.get(`http://10.113.12.38:3000/users/${userId}`);
+      setUserName(response.data.nome);
+    } catch (error) {
+      console.log("Erro ao carregar usuário:", error);
+    }
+  }
+  loadUser();
+}, [userId]);
 
 
-export default function home() {
   return (
-    
-    <View style={styles.container}>
-        <Image style={styles.icon}
-        source={require("../assets/images/icon.png")}
-      />
-      <Text style={styles.welcome}> Boas vindas</Text>
-      <Text style={styles.subWelcome}> Nome do usuário</Text>
-      <TouchableOpacity style={styles.btnExit} onPress={() => {
-        Alert.alert(
-        "Sair da sua conta",
-        "Tem certeza que deseja sair?",
-        [
-            {
-            text: "Cancelar",
-            style: "cancel",
-            },
-            {
-            text: "Sair",
-            onPress: () => router.replace("/"),
-            style: "destructive",
-            },
-        ],
-        { cancelable: true }
-        );
-    }}
-    >
-    <FontAwesome6 name="arrow-right-from-bracket" size={24} color="#C02636" />
-    </TouchableOpacity>
-        <View style={styles.content}>
-        <TouchableOpacity style={styles.btnRevenues} onPress={() => router.push("/revenues")}>
-            <View style={styles.boxIcon}>
-            <Image style={styles.logoRevenues}
-            source={require("../assets/images/newspaper.svg")}
-            />
-            </View>
-            <Text style={styles.title}>Minhas receitas </Text>
-            <Text style={styles.subtitle}>Acompanhe os medicamentos e gerencie lembretes</Text>
-            <MaterialIcons style={styles.arrowIcon} name="arrow-forward-ios" size={20} color="#A2B9CD" />
+    <SafeAreaView style={styles.container}>
+      
+      <View style={styles.header}>
+        <TouchableOpacity onPress={() => Alert.alert("Editar perfil", "Aqui abrirá o modal futuramente")}>
+          <Image 
+            style={styles.icon}
+            source={require("../assets/images/icon.png")}
+          />
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.btnRevenues} onPress={() => router.push("/newRevenues")}>
-            <View style={styles.boxIcon}>
-            <Image style={styles.logoRevenues}
-            source={require("../assets/images/medicine.svg")}
-            />
-            </View>
-            <Text style={styles.title}>Nova receita </Text>
-            <Text style={styles.subtitle}>Cadastre novos lembretes de receitas</Text>
-            <MaterialIcons style={styles.arrowIcon}name="arrow-forward-ios" size={20} color="#A2B9CD" />
+        <Text style={styles.welcome}> Boas vindas</Text>
+        <Text style={styles.subWelcome}>{userName || "..."}</Text>
+
+        <TouchableOpacity
+          style={styles.btnExit}
+          onPress={() => {
+            Alert.alert(
+              "Sair da sua conta",
+              "Tem certeza que deseja sair?",
+              [
+                { text: "Cancelar", style: "cancel" },
+                { text: "Sair", onPress: () => router.replace("/"), style: "destructive" }
+              ],
+              { cancelable: true }
+            );
+          }}
+        >
+          <FontAwesome6 name="arrow-right-from-bracket" size={24} color="#C02636" />
+        </TouchableOpacity>
+      </View>
+
+      <View style={styles.content}>
+
+        <TouchableOpacity 
+          style={styles.btnRevenues} 
+          onPress={() => router.push("/revenues")}
+        >
+          <View style={styles.boxIcon}>
+            <Image style={styles.logoRevenues} source={require("../assets/images/newspaper.svg")} />
+          </View>
+
+          <Text style={styles.title}>Minhas receitas</Text>
+          <Text style={styles.subtitle}>Acompanhe os medicamentos e gerencie lembretes</Text>
+          <MaterialIcons style={styles.arrowIcon} name="arrow-forward-ios" size={20} color="#A2B9CD" />
+        </TouchableOpacity>
+
+        <TouchableOpacity 
+          style={styles.btnRevenues} 
+          onPress={() => router.push("/newRevenues")}
+        >
+          <View style={styles.boxIcon}>
+            <Image style={styles.logoRevenues} source={require("../assets/images/medicine.svg")} />
+          </View>
+
+          <Text style={styles.title}>Nova receita</Text>
+          <Text style={styles.subtitle}>Cadastre novos lembretes de receitas</Text>
+          <MaterialIcons style={styles.arrowIcon} name="arrow-forward-ios" size={20} color="#A2B9CD" />
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.btnRate}>
-            <View style={styles.rateContent}>
+          <View style={styles.rateContent}>
             <Feather style={styles.rateIcon} name="star" size={24} color="white" />
-            <Text style={styles.rateText}>Avaliar </Text>
-            </View>
+            <Text style={styles.rateText}>Avaliar</Text>
+          </View>
         </TouchableOpacity>
-        </View>
-    </View>
-  )
+
+      </View>
+    </SafeAreaView>
+  );
 }
+
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor:"#D7E1EA"
+        backgroundColor:"#D7E1EA",
+    },
+    header:{
+        alignItems: 'flex-start',
+        marginTop: -40,
     },
     icon:{
         width: 70,
@@ -101,14 +134,14 @@ const styles = StyleSheet.create({
         top: 95,
     },
     content:{
-        position: 'absolute',
-        marginTop: 260,
+        marginTop: 20,
         backgroundColor: "#fff",
         width: 415,
-        height: 635,
+        height: 650,
         borderTopLeftRadius: 30,
         borderTopRightRadius: 30,
-        alignItems: 'center',
+        alignSelf: 'center',
+
     },
     btnRevenues:{
         width: 326,
@@ -118,6 +151,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#E8EEF3',
         borderColor: '#D7E1EA',
         borderWidth: 1,
+        alignSelf: 'center',
         
     },
     boxIcon:{
@@ -160,6 +194,7 @@ const styles = StyleSheet.create({
         marginTop: 230,
         width: 326,
         height: 56,
+        alignSelf: 'center',
     },
     rateContent:{
         justifyContent: 'center',
@@ -177,4 +212,4 @@ const styles = StyleSheet.create({
         left: 120,
         top: 16,
     },
-})
+});

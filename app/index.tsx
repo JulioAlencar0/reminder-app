@@ -1,21 +1,27 @@
+import axios from "axios";
 import { Image } from "expo-image";
 import { router } from "expo-router";
 import { useEffect, useRef, useState } from "react";
 import {
+  Alert,
   Animated,
+  Keyboard,
   StatusBar,
   StyleSheet,
   Text,
   TextInput,
   TouchableOpacity,
-  View
+  TouchableWithoutFeedback,
+  View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function Index() {
   const [senhaVisivel, setSenhaVisivel] = useState(false);
   const [isCreatingAccount, setIsCreatingAccount] = useState(false);
-
+  const [email, setEmail] = useState("");
+  const [senha, setSenha] = useState("");
+  const [nome, setNome] = useState("");
   const slideAnim = useRef(new Animated.Value(300)).current;
   const transitionAnim = useRef(new Animated.Value(0)).current;
   const fadeAnim = useRef(new Animated.Value(0)).current;
@@ -60,95 +66,146 @@ export default function Index() {
     outputRange: [0, -2],
   });
 
+ const handleRegister = async () => {
+  try {
+    const response = await axios.post("http://10.113.12.38:3000/users/register", {
+      nome,
+      email,
+      senha,
+    });
+
+    Alert.alert("Sucesso!", "Usuário registrado com sucesso!");
+    setIsCreatingAccount(false);
+
+  } catch (error:any) {
+    Alert.alert("Erro", error?.response?.data?.error || "Erro ao registrar.");
+  }
+};
+
+
+
+
+  const handleLogin = async () => {
+  try {
+    const response = await axios.post("http://10.113.12.38:3000/users/login", {
+      email,
+      senha,
+    });
+
+    Alert.alert("Sucesso!", "Login realizado!");
+    const user = response.data.user;
+    router.push(`/home?userId=${user.id}`);
+
+  } catch (error:any) {
+    Alert.alert("Erro", error?.response?.data?.error || "Senha ou e-mail inválidos.");
+  }
+};
+
+
+
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar backgroundColor="#E4ECE9" barStyle="dark-content" />
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <View style={styles.container}>
+          <StatusBar backgroundColor="#E4ECE9" barStyle="dark-content" />
 
-      <Image
-        style={styles.logo}
-        source={require("../assets/images/logo.svg")}
-      />
-
-      <View style={styles.fundoBrancoFix}></View>
-
-      <Animated.View
-        style={[
-          styles.loginCreate,
-          {
-            transform: [{ translateY: slideAnim }, { translateY }],
-            height: isCreatingAccount ? 600 : 480,
-          },
-        ]}
-      >
-        <Text style={styles.loginCreateText}>
-          {isCreatingAccount
-            ? "Crie sua conta e comece agora"
-            : "Entre para acessar suas receitas"}
-        </Text>
-
-        {/* E-MAIL */}
-        <Text style={styles.inputText}>E-mail</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="email@exemplo.com"
-          placeholderTextColor="#293C4C"
-          keyboardType="email-address"
-        />
-
-        {/* SENHA */}
-        <Text style={styles.inputText}>Senha</Text>
-        <View style={styles.inputWrapper}>
-          <TextInput
-            style={styles.input}
-            secureTextEntry={!senhaVisivel}
-            placeholder="••••••••••"
-            placeholderTextColor="#293C4C"
+          <Image
+            style={styles.logo}
+            source={require("../assets/images/logo.svg")}
           />
 
-          <TouchableOpacity
-            style={styles.eyeButton}
-            onPress={() => setSenhaVisivel(!senhaVisivel)}
+          <View style={styles.fundoBrancoFix}></View>
+
+          <Animated.View
+            style={[
+              styles.loginCreate,
+              {
+                transform: [{ translateY: slideAnim }, { translateY }],
+                height: isCreatingAccount ? 600 : 480,
+              },
+            ]}
           >
-            <Image
-              source={
-                senhaVisivel
-                  ? require("../assets/images/eye-off.svg")
-                  : require("../assets/images/eye.svg")
-              }
-              style={styles.eyeIcon}
+            <Text style={styles.loginCreateText}>
+              {isCreatingAccount
+                ? "Crie sua conta e comece agora"
+                : "Entre para acessar suas receitas"}
+            </Text>
+
+            {/* E-MAIL */}
+            <Text style={styles.inputText}>E-mail</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="email@exemplo.com"
+              placeholderTextColor="#293C4C"
+              keyboardType="email-address"
+              value={email}
+              onChangeText={setEmail}
             />
-          </TouchableOpacity>
+
+            {/* SENHA */}
+            <Text style={styles.inputText}>Senha</Text>
+            <View style={styles.inputWrapper}>
+              <TextInput
+                style={styles.input}
+                secureTextEntry={!senhaVisivel}
+                placeholder="••••••••••"
+                placeholderTextColor="#293C4C"
+                value={senha}
+                onChangeText={setSenha}
+              />
+
+              <TouchableOpacity
+                style={styles.eyeButton}
+                onPress={() => setSenhaVisivel(!senhaVisivel)}
+              >
+                <Image
+                  source={
+                    senhaVisivel
+                      ? require("../assets/images/eye-off.svg")
+                      : require("../assets/images/eye.svg")
+                  }
+                  style={styles.eyeIcon}
+                />
+              </TouchableOpacity>
+            </View>
+
+            <Animated.View
+              style={{
+                opacity: fadeAnim,
+                transform: [{ translateY: confirmSlide }],
+              }}
+            >
+              {isCreatingAccount && (
+                <>
+                  <Text style={styles.inputText}>Nome</Text>
+                  <TextInput
+                    style={styles.input}
+                    keyboardType="default"
+                    placeholder="Ex: Júlio César"
+                    placeholderTextColor={"#293C4C"}
+                    value={nome}
+                    onChangeText={setNome}
+                  />
+                </>
+              )}
+            </Animated.View>
+
+            <TouchableOpacity
+              onPress={isCreatingAccount ? handleRegister : handleLogin}
+            >
+              <Text style={styles.btnEnterText}>
+                {isCreatingAccount ? "Cadastrar" : "Entrar"}
+              </Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity onPress={toggleForm}>
+              <Text style={[styles.btnEnterText, styles.btnCriarConta]}>
+                {isCreatingAccount ? "Já tenho uma conta" : "Criar uma conta"}
+              </Text>
+            </TouchableOpacity>
+          </Animated.View>
         </View>
-
-        {/* NOME — aparece só no modo criar conta */}
-        <Animated.View
-          style={{
-            opacity: fadeAnim,
-            transform: [{ translateY: confirmSlide }],
-          }}
-        >
-          {isCreatingAccount && (
-            <>
-              <Text style={styles.inputText}>Nome</Text>
-              <TextInput style={styles.input} keyboardType="default" placeholder="Ex: Júlio César" placeholderTextColor={"#293C4C"} />
-            </>
-          )}
-        </Animated.View>
-
-        {/* BOTÃO PRINCIPAL */}
-        <TouchableOpacity onPress={() => router.replace("/home")}>
-          <Text style={styles.btnEnterText}>
-            {isCreatingAccount ? "Cadastrar" : "Entrar"}
-          </Text>
-        </TouchableOpacity>
-
-        {/* BOTÃO SECUNDÁRIO */}
-        <TouchableOpacity onPress={toggleForm}>
-          <Text style={[styles.btnEnterText, styles.btnCriarConta]}>
-            {isCreatingAccount ? "Já tenho uma conta" : "Criar uma conta"}
-          </Text>
-        </TouchableOpacity>
-      </Animated.View>
+      </TouchableWithoutFeedback>
     </SafeAreaView>
   );
 }
@@ -199,7 +256,6 @@ const styles = StyleSheet.create({
     marginTop: 30,
   },
 
-  /* INPUTS */
   inputWrapper: {
     position: "relative",
     width: "100%",
