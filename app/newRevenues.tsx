@@ -1,4 +1,5 @@
 import { Feather } from "@expo/vector-icons";
+import axios from "axios";
 import { router } from "expo-router";
 import React, { useState } from "react";
 import {
@@ -13,6 +14,7 @@ import {
   TouchableWithoutFeedback,
   View,
 } from "react-native";
+import { useUser } from "../context/UserContext";
 
 import { Picker } from "@react-native-picker/picker";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
@@ -20,6 +22,8 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function NovaReceita() {
   const [tomarAgora, setTomarAgora] = useState(false);
+  const { user } = useUser();
+
 
   // Nome do Remédio
   const [name, setName] = useState("");
@@ -43,28 +47,36 @@ export default function NovaReceita() {
   const [openRecurrencePicker, setOpenRecurrencePicker] = useState(false);
 
   // ENVIO PARA TELA REVENUES
-  const handleAdd = () => {
-    if (!name || !time || !recurrence) {
-      Alert.alert("Ops!", "Preencha todos os campos.");
-      return;
-    }
+  const handleAdd = async () => {
+  if (!name || !time || !recurrence) {
+    Alert.alert("Ops!", "Preencha todos os campos.");
+    return;
+  }
 
-    const newRevenue = {
-      name,
-      time,
-      recurrence,
-      tomarAgora,
-    };
+  if (!user) {
+    Alert.alert("Erro", "Usuário não encontrado.");
+    return;
+  }
+
+  try {
+    await axios.post("http://10.0.0.11:3000/lembretes", {
+      nome_remedio: name,
+      horario: time,
+      recorrencia: recurrence,
+      tomarAgora: tomarAgora,
+      user_id: user.id, // 🔥 chave estrangeira do usuário logado
+    });
 
     Alert.alert("Sucesso!", "Receita adicionada com sucesso.");
 
-    router.push({
-      pathname: "/revenues",
-      params: {
-        newRevenue: JSON.stringify(newRevenue),
-      },
-    });
-  };
+    router.push("/revenues");
+
+  } catch (err) {
+    console.log(err);
+    Alert.alert("Erro", "Não foi possível salvar a receita.");
+  }
+};
+
 
   return (
     <SafeAreaView style={styles.container}>
@@ -169,10 +181,10 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#ffffff",
-    
+    paddingHorizontal: 12,
   },
   btnBack: {
-    marginTop: 60,
+    marginTop: 20,
   },
   title: {
     fontSize: 22,
@@ -183,24 +195,23 @@ const styles = StyleSheet.create({
   subtitle: {
     fontSize: 14,
     marginTop: 10,
-    marginLeft: 24,
   },
   label: {
     marginTop: 25,
     fontSize: 14,
     fontWeight: "600",
-    marginLeft: 24,},
+    marginLeft: 0,
+  },
   input: {
     backgroundColor: "#fff",
     borderRadius: 8,
     borderWidth: 1,
     borderColor: "#A2B9CD",
-    width: 366,
+    width: "100%",
     height: 56,
     paddingLeft: 16,
     justifyContent: "center",
     marginTop: 10,
-    alignSelf: "center",
   },
 
   overlay: {
@@ -216,6 +227,8 @@ const styles = StyleSheet.create({
   switchRow: {
     alignItems: "center",
     marginTop: 20,
+    flexDirection: "row",
+    width: "100%",
   },
   switchText: {
     marginLeft: 10,
@@ -224,12 +237,13 @@ const styles = StyleSheet.create({
   btnAdd: {
     backgroundColor: "#C02636",
     borderRadius: 999,
-    marginTop: 160,
+    marginTop: 80,
     alignItems: "center",
     paddingVertical: 14,
     marginBottom: 30,
     width: 366,
     alignSelf: "center",
+  
   },
   btnAddText: {
     color: "#fff",

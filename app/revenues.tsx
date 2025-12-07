@@ -1,49 +1,66 @@
 import { Feather, FontAwesome6 } from '@expo/vector-icons';
-import { router, useLocalSearchParams } from 'expo-router';
-import React, { useEffect, useState } from 'react';
-import { FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import axios from "axios";
+import { router, useFocusEffect, useLocalSearchParams } from 'expo-router';
+import React, { useCallback, useState } from 'react';
+import { Alert, FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+
+interface Revenue {
+  id: number;
+  nome_remedio: string;
+  horario: string;
+  recorrencia: string;
+}
 
 export default function Revenues() {
-  const handleDelete = (id: string) => {
-  setRevenues(prev => prev.filter(item => item.id !== id));
+  const [revenues, setRevenues] = useState<Revenue[]>([]);
+  const [userId, setUserId] = useState<string | null>(null);
+
+  const { id } = useLocalSearchParams();
+
+  const fetchData = async (idParam: string | number) => {
+    try {
+      const res = await axios.get(`http://10.0.0.11:3000/lembretes/user/${idParam}`);
+      setRevenues(res.data);
+    } catch (e) {
+      console.log("Erro ao buscar receitas:", e);
+    }
+  };
+
+  useFocusEffect(
+    useCallback(() => {
+      if (id) {
+        const idString = Array.isArray(id) ? id[0] : id;
+
+        setUserId(idString);
+
+        // 🔥 IMPORTANTE: limpar receitas ao trocar de usuário
+        setRevenues([]);
+        console.log("ID RECEBIDO NA TELA:", id);
+
+        fetchData(idString);
+      }
+    }, [id])
+  );
+
+  const handleDelete = (id: number) => {
+  Alert.alert(
+    "Deletar lembrete",
+    "Tem certeza que deseja apagar esse lembrete?",
+    [
+      { text: "Cancelar", style: "cancel" },
+      { text: "Deletar", style: "destructive", onPress: async () => {
+        try {
+          await axios.delete(`http://10.0.0.11:3000/lembretes/${id}`);
+          setRevenues(prev => prev.filter(item => item.id !== id));
+        } catch (error) {
+          console.log(error);
+          Alert.alert("Erro", "Não foi possível deletar.");
+        }
+      }}
+    ]
+  );
 };
 
-  const [revenues, setRevenues] = useState([
-    {
-      id: "1",
-      name: "Nome do remédio",
-      time: "14:00",
-      recurrence: "A cada 12 horas",
-    }
-  ]);
-
-  const params = useLocalSearchParams();
-
-  useEffect(() => {
-  if (params?.newRevenue) {
-    const newRevenueParam = Array.isArray(params.newRevenue)
-      ? params.newRevenue[0]
-      : params.newRevenue;
-
-    if (typeof newRevenueParam !== "string") return;
-
-    try {
-      const parsed = JSON.parse(newRevenueParam);
-
-      setRevenues(prev => [
-        ...prev,
-        {
-          id: Date.now().toString(),
-          name: parsed.name,
-          time: parsed.time,
-          recurrence: parsed.recurrence,
-        }
-      ]);
-    } catch (e) {
-      console.warn("Failed to parse newRevenue:", e);
-    }
-  }
-}, [params?.newRevenue]); 
 
 
   return (
@@ -55,7 +72,10 @@ export default function Revenues() {
       <TouchableOpacity
         style={styles.btnPlus}
         onPress={() =>
-          router.push("/newRevenues")
+          router.push({
+            pathname: "/newRevenues",
+            params: { id: userId },
+          })
         }
       >
         <FontAwesome6 name="circle-plus" size={34} color="#334FDC" />
@@ -69,27 +89,26 @@ export default function Revenues() {
       <View style={styles.content}>
         <FlatList
           data={revenues}
-          keyExtractor={(item) => item.id}
+          keyExtractor={(item) => item.id.toString()}
           renderItem={({ item }) => (
             <View style={styles.card}>
               <View style={styles.cardTop}>
-                <Text style={styles.textTitle}>{item.name}</Text>
+                <Text style={styles.textTitle}>{item.nome_remedio}</Text>
 
                 <TouchableOpacity style={styles.btnTrash} onPress={() => handleDelete(item.id)}>
                   <Feather name="trash-2" size={20} color="#C02636" />
-                  
                 </TouchableOpacity>
               </View>
 
               <View style={styles.chipsRow}>
                 <View style={styles.subtitleCard}>
                   <Feather name="clock" size={16} color="#4D708F" style={styles.cardIcon} />
-                  <Text style={styles.chipText}>{item.time}</Text>
+                  <Text style={styles.chipText}>{item.horario}</Text>
                 </View>
 
                 <View style={styles.subtitleCard2}>
                   <FontAwesome6 name="arrow-right-arrow-left" size={16} color="#4D708F" style={styles.cardIcon} />
-                  <Text style={styles.chipText}>{item.recurrence}</Text>
+                  <Text style={styles.chipText}>{item.recorrencia}</Text>
                 </View>
               </View>
             </View>

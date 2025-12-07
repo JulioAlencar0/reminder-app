@@ -15,6 +15,7 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useUser } from "../context/UserContext";
 
 export default function Index() {
   const [senhaVisivel, setSenhaVisivel] = useState(false);
@@ -26,6 +27,7 @@ export default function Index() {
   const transitionAnim = useRef(new Animated.Value(0)).current;
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const confirmSlide = useRef(new Animated.Value(20)).current;
+  const { setUser } = useUser();
 
   useEffect(() => {
     Animated.spring(slideAnim, {
@@ -68,7 +70,7 @@ export default function Index() {
 
  const handleRegister = async () => {
   try {
-    const response = await axios.post("http://10.113.12.38:3000/users/register", {
+    const response = await axios.post("http://10.0.0.11:3000/users/register", {
       nome,
       email,
       senha,
@@ -85,21 +87,30 @@ export default function Index() {
 
 
 
-  const handleLogin = async () => {
+ const handleLogin = async () => {
   try {
-    const response = await axios.post("http://10.113.12.38:3000/users/login", {
+    const response = await axios.post("http://10.0.0.11:3000/users/login", {
       email,
       senha,
     });
 
-    Alert.alert("Sucesso!", "Login realizado!");
     const user = response.data.user;
-    router.push(`/home?userId=${user.id}`);
 
-  } catch (error:any) {
-    Alert.alert("Erro", error?.response?.data?.error || "Senha ou e-mail inválidos.");
+    // Salva o user no context
+    setUser(user);
+
+    Alert.alert("Sucesso!", "Login realizado!");
+
+    router.push({
+    pathname: "/home",
+    params: { id: user.id }
+});
+
+  } catch (error: any) {
+    Alert.alert("Erro", "Senha ou e-mail inválidos.");
   }
 };
+
 
 
 
@@ -252,6 +263,7 @@ const styles = StyleSheet.create({
     marginTop: 48,
   },
   inputText: {
+
     width: "100%",
     marginTop: 30,
   },
@@ -262,6 +274,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   input: {
+    textTransform: "lowercase",
     width: "100%",
     height: 56,
     marginTop: 12,

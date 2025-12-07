@@ -1,31 +1,16 @@
 import Feather from '@expo/vector-icons/Feather';
 import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
-import axios from "axios";
 import { Image } from 'expo-image';
-import { router, useLocalSearchParams } from 'expo-router';
-import React, { useEffect, useState } from 'react';
+import { router } from 'expo-router';
+import React from 'react';
 import { Alert, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { useUser } from "../context/UserContext";
+
 export default function Home() {
-
-  const { userId } = useLocalSearchParams(); 
-  const [userName, setUserName] = useState("");
-
-  useEffect(() => {
-  if (!userId) return; 
-  async function loadUser() {
-    try {
-      const response = await axios.get(`http://10.113.12.38:3000/users/${userId}`);
-      setUserName(response.data.nome);
-    } catch (error) {
-      console.log("Erro ao carregar usuário:", error);
-    }
-  }
-  loadUser();
-}, [userId]);
-
+  const { user } = useUser();
 
   return (
     <SafeAreaView style={styles.container}>
@@ -39,7 +24,7 @@ export default function Home() {
         </TouchableOpacity>
 
         <Text style={styles.welcome}> Boas vindas</Text>
-        <Text style={styles.subWelcome}>{userName || "..."}</Text>
+        <Text style={styles.subWelcome}>{user?.nome || "..."}</Text>
 
         <TouchableOpacity
           style={styles.btnExit}
@@ -63,7 +48,10 @@ export default function Home() {
 
         <TouchableOpacity 
           style={styles.btnRevenues} 
-          onPress={() => router.push("/revenues")}
+          onPress={() => router.push({
+                pathname: "/revenues",
+                params: { id: user?.id }
+                })}
         >
           <View style={styles.boxIcon}>
             <Image style={styles.logoRevenues} source={require("../assets/images/newspaper.svg")} />
