@@ -64,7 +64,7 @@ export default function NovaReceita() {
       horario: time,
       recorrencia: recurrence,
       tomarAgora: tomarAgora,
-      user_id: user.id, // 🔥 chave estrangeira do usuário logado
+      user_id: user.id, 
     });
 
     Alert.alert("Sucesso!", "Receita adicionada com sucesso.");

@@ -33,7 +33,6 @@ export default function Revenues() {
 
         setUserId(idString);
 
-        // 🔥 IMPORTANTE: limpar receitas ao trocar de usuário
         setRevenues([]);
         console.log("ID RECEBIDO NA TELA:", id);
 
