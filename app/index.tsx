@@ -17,6 +17,7 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useUser } from "../context/UserContext";
 
+
 export default function Index() {
   const [senhaVisivel, setSenhaVisivel] = useState(false);
   const [isCreatingAccount, setIsCreatingAccount] = useState(false);
@@ -70,7 +71,7 @@ export default function Index() {
 
  const handleRegister = async () => {
   try {
-    const response = await axios.post("http://10.0.0.11:3000/users/register", {
+    const response = await axios.post("http://10.113.12.38:3000/users/register", {
       nome,
       email,
       senha,
@@ -89,7 +90,7 @@ export default function Index() {
 
  const handleLogin = async () => {
   try {
-    const response = await axios.post("http://10.0.0.11:3000/users/login", {
+    const response = await axios.post("http://10.113.12.38:3000/users/login", {
       email,
       senha,
     });

@@ -1,17 +1,21 @@
 import { Stack } from "expo-router";
+import { StatusBar } from 'expo-status-bar';
 import { UserProvider } from "../context/UserContext";
+
 
 export default function RootLayout() {
   return (
     <UserProvider>
-      <Stack screenOptions={{ headerShown: false }}>
+      <Stack  screenOptions={{ headerShown: false } }>
       {/* Revenues */}
       <Stack.Screen 
         name="revenues"
+        
         options={{
           gestureEnabled: false,
           animation: "simple_push"
         }}
+
       />
 
       {/* newRevenues */}
@@ -21,7 +25,10 @@ export default function RootLayout() {
           gestureEnabled: false,
           animation: "simple_push"
         }}
+        
       />
+          <StatusBar style="auto" />
+
     </Stack>
     </UserProvider>
   );

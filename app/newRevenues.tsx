@@ -1,7 +1,9 @@
 import { Feather } from "@expo/vector-icons";
 import axios from "axios";
 import { router } from "expo-router";
+import { StatusBar } from 'expo-status-bar';
 import React, { useState } from "react";
+
 import {
   Alert,
   Keyboard,
@@ -59,7 +61,7 @@ export default function NovaReceita() {
   }
 
   try {
-    await axios.post("http://10.0.0.11:3000/lembretes", {
+    await axios.post("http://10.113.12.38:3000/lembretes", {
       nome_remedio: name,
       horario: time,
       recorrencia: recurrence,
@@ -76,6 +78,8 @@ export default function NovaReceita() {
     Alert.alert("Erro", "Não foi possível salvar a receita.");
   }
 };
+          <StatusBar style="auto" />
+
 
 
   return (
@@ -141,17 +145,22 @@ export default function NovaReceita() {
 
         <View style={styles.pickerContainer}>
           <Picker
+                itemStyle={styles.pickerItem}
+
             selectedValue={recurrence}
+                  selectionColor="rgba(244, 8, 244, 0.3)"
+
             onValueChange={(value) => {
               setRecurrence(value);
               setOpenRecurrencePicker(false);
+              
             }}
           >
-            <Picker.Item label="Selecione..." value="" />
-            <Picker.Item label="A cada 6 horas" value="A cada 6 horas" />
-            <Picker.Item label="A cada 8 horas" value="A cada 8 horas" />
-            <Picker.Item label="A cada 12 horas" value="A cada 12 horas" />
-            <Picker.Item label="A cada 24 horas" value="A cada 24 horas" />
+            <Picker.Item style={styles.pickerItem} label="Selecione..." value="" />
+            <Picker.Item style={styles.pickerItem} label="A cada 6 horas" value="A cada 6 horas" />
+            <Picker.Item style={styles.pickerItem} label="A cada 8 horas" value="A cada 8 horas" />
+            <Picker.Item style={styles.pickerItem} label="A cada 12 horas" value="A cada 12 horas" />
+            <Picker.Item style={styles.pickerItem} label="A cada 24 horas" value="A cada 24 horas" />
           </Picker>
         </View>
       </Modal>
@@ -222,6 +231,10 @@ const styles = StyleSheet.create({
   pickerContainer: {
     backgroundColor: "#fff",
     paddingBottom: 30,
+  },
+  pickerItem: {
+    color: "#000",
+    fontWeight: "600",
   },
 
   switchRow: {

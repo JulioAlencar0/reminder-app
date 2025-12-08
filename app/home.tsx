@@ -3,6 +3,7 @@ import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { Image } from 'expo-image';
 import { router } from 'expo-router';
+import { StatusBar } from 'expo-status-bar';
 import React from 'react';
 import { Alert, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -11,6 +12,8 @@ import { useUser } from "../context/UserContext";
 
 export default function Home() {
   const { user } = useUser();
+  <StatusBar style="auto" />
+
 
   return (
     <SafeAreaView style={styles.container}>

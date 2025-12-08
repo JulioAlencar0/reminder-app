@@ -19,7 +19,7 @@ export default function Revenues() {
 
   const fetchData = async (idParam: string | number) => {
     try {
-      const res = await axios.get(`http://10.0.0.11:3000/lembretes/user/${idParam}`);
+      const res = await axios.get(`http://10.113.12.38:3000/lembretes/user/${idParam}`);
       setRevenues(res.data);
     } catch (e) {
       console.log("Erro ao buscar receitas:", e);
@@ -49,7 +49,7 @@ export default function Revenues() {
       { text: "Cancelar", style: "cancel" },
       { text: "Deletar", style: "destructive", onPress: async () => {
         try {
-          await axios.delete(`http://10.0.0.11:3000/lembretes/${id}`);
+          await axios.delete(`http://10.113.12.38:3000/lembretes/${id}`);
           setRevenues(prev => prev.filter(item => item.id !== id));
         } catch (error) {
           console.log(error);
@@ -59,9 +59,6 @@ export default function Revenues() {
     ]
   );
 };
-
-
-
   return (
     <View style={styles.container}>
       <TouchableOpacity style={styles.btnBack} onPress={() => router.replace("/home")}>
@@ -86,8 +83,15 @@ export default function Revenues() {
       </Text>
 
       <View style={styles.content}>
-        <FlatList
-          data={revenues}
+
+        {revenues.length === 0 ? (
+          <Text style={{ marginTop: 20, color: '#4D708F' }}>Nenhuma receita cadastrada.</Text>
+        ):(
+          <Text></Text>
+        )
+        }
+          <FlatList
+            data={revenues}
           keyExtractor={(item) => item.id.toString()}
           renderItem={({ item }) => (
             <View style={styles.card}>
